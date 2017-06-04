@@ -246,7 +246,7 @@ const mutations = {
     // 发送信息
     sendMessage (state, content){
         let result = state.chatlist.find(session => session.id === state.selectId);
-         result.messages.push({
+        result.messages.push({
                 content: content,
                 date: new Date(),
                 self: true
@@ -304,6 +304,10 @@ const getters = {
     selectedFriend (state) {
        let friend = state.friendlist.find(friend => friend.id === state.selectFriendId);
        return friend
+    },
+    messages (state) {
+        let session = state.chatlist.find(session => session.id === state.selectId);
+        return session.messages
     }
 }
 

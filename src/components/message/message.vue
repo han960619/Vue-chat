@@ -25,7 +25,8 @@ import { mapGetters, mapState } from 'vuex'
 export default {
     computed: {
         ...mapGetters([
-            'selectedChat'
+            'selectedChat',
+            'messages'
         ]),
    	    ...mapState([
             'user',
