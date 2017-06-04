@@ -24,20 +24,24 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 export default {
     data () {
         return {
-            content: '',  
+            content: '',
+            reply: '未找到',  
             frequency: 0,
             warn: false,
             showEmoji: false,
         };
     },
     computed: {
-   	    ...mapState([   
+        ...mapState([   
             'selectId',
             'emojis'
+        ]),
+        ...mapGetters([
+            'selectedChat',
         ])
     },
     methods: {
@@ -49,41 +53,59 @@ export default {
         },
         // 点击发送按钮发送信息
         send () {
-        	if(this.content.length <= 1){
-        		this.warn = true
-               	this.content = ''
-               	setTimeout(() => {
-    		        this.warn = false;
-    	          }, 1000)
-               }else{
-               	this.$store.dispatch('sendMessage', this.content)
+            if(this.content.length <= 1){
+                this.warn = true
                 this.content = ''
+                setTimeout(() => {
+                    this.warn = false;
+                  }, 1000)
+               }else{
+                    if(this.selectedChat.user.name === '机器人'){
+                        this.$http.get(`https://zhaoplus.com/api/AI?search=${this.content}`).then(res => {
+                            this.reply = res.data.result.text
+                            if(this.content.includes('/:')){
+                                this.reply = '嘻嘻'
+                            }
+                            var msg = {
+                                content: this.content,
+                                reply: this.reply
+                            }
+                            this.$store.dispatch('sendMessage', msg)
+                            this.content = ''
+                       })
+                    }else{
+                        var msg = {
+                            content: this.content,
+                        }
+                        this.$store.dispatch('sendMessage', msg)
+                            this.content = ''
+                    }
                }
         }
     },
     // 在进入的时候 聚焦输入框
     mounted() {
-    		this.$refs.text.focus()
+            this.$refs.text.focus()
     },
     watch: {
         // 在选择其它对话的时候 聚焦输入框
-    	selectId() {
-    	  setTimeout(() => {
-    		this.$refs.text.focus()
-    	  }, 0)
-    	},
+        selectId() {
+          setTimeout(() => {
+            this.$refs.text.focus()
+          }, 0)
+        },
         // 当输入框中的值为空时 弹出提示  并在一秒后消失
-    	content() {
-    		if(this.content === ''){
-    			if( this.frequency === 0){
-    			  this.warn = true;
-    			  this.frequency++
-    			  setTimeout(() => {
-    		        this.warn = false;
-    	          }, 1000)
-    			}
-    		}
-    	}
+        content() {
+            if(this.content === ''){
+                if( this.frequency === 0){
+                  this.warn = true;
+                  this.frequency++
+                  setTimeout(() => {
+                    this.warn = false;
+                  }, 1000)
+                }
+            }
+        }
     }
 }
 </script>

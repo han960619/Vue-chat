@@ -28,29 +28,32 @@ export default {
             'selectedChat',
             'messages'
         ]),
-   	    ...mapState([
+        ...mapState([
             'user',
             'emojis'
         ])
     },
     mounted() {
          //  在页面加载时让信息滚动到最下面
-    	 this.$refs.list.scrollTop = this.$refs.list.scrollHeight
+        setTimeout(() => this.$refs.list.scrollTop = this.$refs.list.scrollHeight, 0)
     },
     watch: {
-        //  发送信息后,让信息滚动到最下面
-    	messages() {
-    	  setTimeout(() => this.$refs.list.scrollTop = this.$refs.list.scrollHeight, 0)
-    	}
+        // 发送信息后,让信息滚动到最下面
+        messages() {
+          setTimeout(() => this.$refs.list.scrollTop = this.$refs.list.scrollHeight, 0)
+        }
     },
     methods: {
         //  在发送信息之后，将输入的内容中属于表情的部分替换成emoji图片标签
         //  再经过v-html 渲染成真正的图片
         replaceFace (con) {
-            var emojis=this.emojis;
-            for(var i=0;i<emojis.length;i++){
-                con = con.replace(emojis[i].reg, '<img src="static/emoji/' + emojis[i].file +'"  alt="" style="vertical-align: middle; width: 24px; height: 24px" />');
-            }   
+            if(con.includes('/:')) {
+                var emojis=this.emojis;
+                for(var i=0;i<emojis.length;i++){
+                    con = con.replace(emojis[i].reg, '<img src="static/emoji/' + emojis[i].file +'"  alt="" style="vertical-align: middle; width: 24px; height: 24px" />');
+                }   
+                return con;
+            }
             return con;
         }
     },

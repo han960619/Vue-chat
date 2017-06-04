@@ -49,17 +49,17 @@ const state = {
             index: 2
         },
         {
-        	id: 3,
-        	user: {
-        		name: 'vue',
-        		img: 'static/images/vue.jpg'
-        	},
-        	messages: [
+            id: 3,
+            user: {
+                name: '机器人',
+                img: 'static/images/vue.jpg'
+            },
+            messages: [
                 {
-                    content: 'Vue.js是一套构建用户界面的渐进式框架。与其他重量级框架不同的是，Vue 采用自底向上增量开发的设计。',
+                    content: '我会跟你聊聊天的哟',
                     date: now
                 }
-        	],
+            ],
             index: 3
         }
     ],
@@ -244,13 +244,22 @@ const mutations = {
        state.selectFriendId = value
     },
     // 发送信息
-    sendMessage (state, content){
+    sendMessage (state, msg){
         let result = state.chatlist.find(session => session.id === state.selectId);
-        result.messages.push({
-                content: content,
+         result.messages.push({
+                content: msg.content,
                 date: new Date(),
                 self: true
         });
+         if(result.user.name === '机器人'){
+             setTimeout(() => {
+                result.messages.push({
+                    content: msg.reply,
+                    date: new Date(),
+                    self: false
+                });
+             },500)
+         }
     },
 
     // 选择好友后，点击发送信息。判断在聊天列表中是否有该好友，有的话跳到该好友对话。没有的话
@@ -319,7 +328,7 @@ const actions = {
     },
     selectSession: ({ commit }, value) => commit('selectSession', value),
     selectFriend: ({ commit }, value) => commit('selectFriend', value),
-    sendMessage: ({ commit }, content) => commit('sendMessage', content),
+    sendMessage: ({ commit }, msg) => commit('sendMessage', msg),
     send: ({ commit }) => commit('send'),
     initData: ({ commit }) => commit('initData')
 }
