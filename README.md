@@ -1,6 +1,6 @@
-# wechat
+# Vue-chat
 
-> A Vue.js project
+使用Vue.js实现一个仿微信pc版的小demo.
 
 ## Build Setup
 
